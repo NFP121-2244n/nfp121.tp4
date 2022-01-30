@@ -34,19 +34,20 @@ public class Controleur extends JPanel {
 
         setLayout(new GridLayout(2, 1));
         add(donnee);
-        donnee.addActionListener(null /* null est à remplacer */);
+        donnee.addActionListener(new ActionPile());
         JPanel boutons = new JPanel();
         boutons.setLayout(new FlowLayout());
-        boutons.add(push);  push.addActionListener(null /* null est à remplacer */);
-        boutons.add(add);   add.addActionListener(null /* null est à remplacer */);
-        boutons.add(sub);   sub.addActionListener(null /* null est à remplacer */);
-        boutons.add(mul);   mul.addActionListener(null /* null est à remplacer */);
-        boutons.add(div);   div.addActionListener(null /* null est à remplacer */);
-        boutons.add(clear); clear.addActionListener(null /* null est à remplacer */);
+        boutons.add(push);  push.addActionListener(new ActionPile());
+        boutons.add(add);   add.addActionListener(new ActionPile());
+        boutons.add(sub);   sub.addActionListener(new ActionPile());
+        boutons.add(mul);   mul.addActionListener(new ActionPile());
+        boutons.add(div);   div.addActionListener(new ActionPile());
+        boutons.add(clear); clear.addActionListener(new ActionPile());
         add(boutons);
         boutons.setBackground(Color.red);
         actualiserInterface();
     }
+
 
     public void actualiserInterface() {
         // à compléter
@@ -56,9 +57,89 @@ public class Controleur extends JPanel {
         return Integer.parseInt(donnee.getText());
     }
 
-    // à compléter
-    // en cas d'exception comme division par zéro, 
-    // mauvais format de nombre suite à l'appel de la méthode operande
-    // la pile reste en l'état (intacte)
-
+    
+    
+public class ActionPile implements ActionListener {
+        public void actionPerformed(ActionEvent e){
+            if(e.getSource()==push){
+                try{
+                pile.empiler(operande());
+                }catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Nombre Invalide", "Error",
+                JOptionPane.ERROR_MESSAGE);
+                } 
+                catch(PilePleineException ex){
+                JOptionPane.showMessageDialog(null, "Pile Pleine", "Error", JOptionPane.ERROR_MESSAGE);                   
+                }
+                donnee.setText("");
+            }
+            else if(e.getSource()==add){
+                try{
+                    pile.empiler(pile.depiler() + pile.depiler());
+                }
+                catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Nombre Invalide", "Error", JOptionPane.ERROR_MESSAGE);    
+                } 
+                catch(PilePleineException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Pleine", "Error", JOptionPane.ERROR_MESSAGE);                   
+                }
+                catch(PileVideException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Vide", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                donnee.setText("");
+            }
+            else if(e.getSource()==sub){
+                try{
+                    pile.empiler(pile.depiler() - pile.depiler());
+                }catch(PileVideException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Vide", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                 catch(PilePleineException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Pleine", "Error", JOptionPane.ERROR_MESSAGE);                   
+                }
+                
+                catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Nombre Invalide", "Error",
+        JOptionPane.ERROR_MESSAGE);    
+                } 
+                donnee.setText("");
+            }
+            else if(e.getSource()==mul){
+                    try{
+                pile.empiler(pile.depiler() * pile.depiler());
+                }catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Nombre Invalide", "Error", JOptionPane.ERROR_MESSAGE);    
+                } 
+                catch(PilePleineException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Pleine", "Error", JOptionPane.ERROR_MESSAGE);                   
+                }
+                catch(PileVideException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Vide" , "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                donnee.setText("");
+            }
+            else if(e.getSource()==div){
+                    try{
+                        int op1=pile.depiler();
+                        int op2=pile.depiler(); 
+                        pile.empiler(op1 / op2); 
+                }catch(NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Nombre Invalide", "Error", JOptionPane.ERROR_MESSAGE);    
+                }  
+                catch(ArithmeticException ex){
+                    JOptionPane.showMessageDialog(null,"Error : Division by 0", "Error", JOptionPane.ERROR_MESSAGE);                   
+                }
+                catch(PilePleineException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Pleine", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                catch(PileVideException ex){
+                    JOptionPane.showMessageDialog(null, "Pile Vide", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                donnee.setText("");
+            }
+            else if(e.getSource()==clear){
+                donnee.setText("");
+            }
+        }
+    }
 }
